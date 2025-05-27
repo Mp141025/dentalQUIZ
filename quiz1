@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dental Cements Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .quiz-container {
+      background: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      font-size: 1.3rem;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .correct { background-color: #a0e7a0; }
+    .wrong { background-color: #e7a0a0; }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Loading...</h2>
+    <div id="options"></div>
+    <button onclick="nextQuestion()">Next</button>
+    <p id="score"></p>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "1. The preferred agent for base formation below restorative resin is:",
+        options: ["Calcium hydroxide", "Cavity varnish", "Zinc oxide-eugenol cement", "Zinc phosphate cement"],
+        answer: 0
+      },
+      {
+        question: "2. Dentin protection during cavity restoration is required when the 'remaining dentin thickness' is:",
+        options: ["< 1.0 mm", "< 0.5 mm", "2.0 mm", "> 2.5 mm"],
+        answer: 0
+      },
+      {
+        question: "3. Cavity varnish is indicated under amalgam restorations to:",
+        options: [
+          "Prevent galvanic currents from reaching the pulp",
+          "Improve the marginal seal of the restorations",
+          "Seal the dentinal tubules completely",
+          "Act as an effective thermal insulator"
+        ],
+        answer: 3
+      },
+      {
+        question: "4. Calcium hydroxide is preferred to ZOE fillings below a composite resin restoration as:",
+        options: [
+          "Calcium hydroxide forms a calcific bridge",
+          "Eugenol irritates the inflamed pulp",
+          "Eugenol interferes with the setting of composite resins",
+          "All of the above"
+        ],
+        answer: 3
+      },
+      {
+        question: "5. Which of the following cement has most anticariogenic effect used while placing bands on molar to prevent caries:",
+        options: ["Polycarboxylate", "Silicate", "Zinc phosphate", "Glass ionomer cement"],
+        answer: 3
+      },
+      {
+        question: "6. High viscosity GIC was discovered in:",
+        options: ["1990", "1980", "1970", "1989"],
+        answer: 0
+      },
+      {
+        question: "7. Vitremer is:",
+        options: [
+          "Resin modified GIC",
+          "Metal modified GIC",
+          "Organically modified composite",
+          "Polyacid modified composite"
+        ],
+        answer: 0
+      },
+      {
+        question: "8. Cavity varnish is used for:",
+        options: [
+          "To reduce thermal conductivity",
+          "To reduce the permeability of acid into dentinal tubules",
+          "Action as an obtundant",
+          "All of the above"
+        ],
+        answer: 3
+      },
+      {
+        question: "9. Amount of gap required for cement in restoration is:",
+        options: ["10-25 microns", "2 microns", "50-100 microns", "No gap required"],
+        answer: 0
+      },
+      {
+        question: "10. Copal varnish is:",
+        options: ["ZnO resin", "Ca(OH)2", "ZnO glycerin", "All of the above"],
+        answer: 0
+      },
+      {
+        question: "11. Amalgam often tends to discolor the teeth. This can be inhibited by using:",
+        options: [
+          "An alloy containing zinc",
+          "Amalgam varnish on the pulpal floor",
+          "Cavity varnish on all cut surfaces",
+          "None"
+        ],
+        answer: 2
+      },
+      {
+        question: "12. Fluoride rich matrices include:",
+        options: ["Silicate cement", "Glass ionomer cement", "Polycarboxylate", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "13. Glass ionomer cements are composed of:",
+        options: [
+          "Alumino silicate powder and phosphoric acid",
+          "Alumino silicate powder and polyacrylic acid",
+          "Zinc oxide powder and phosphoric acid",
+          "Zinc oxide powder and polyacrylic acid"
+        ],
+        answer: 1
+      },
+      {
+        question: "14. Which one of the following dental cement accelerates the formation of reparative dentin:",
+        options: ["Eugenol", "Calcium hydroxide", "Zinc oxide", "Zinc chloride"],
+        answer: 1
+      },
+      {
+        question: "15. Atraumatic Restorative Treatment (ART) technique utilizes:",
+        options: ["Glass ionomer cement", "Composite resin cement", "Zinc phosphate cement", "None"],
+        answer: 0
+      },
+      {
+        question: "16. Increased amount of powder in zinc phosphate:",
+        options: [
+          "Decreases strength",
+          "Decreases film thickness",
+          "Increases film thickness",
+          "Increases setting time"
+        ],
+        answer: 1
+      },
+      {
+        question: "17. Which of the following is common to both zinc eugenol and zinc polycarboxylate:",
+        options: [
+          "Contains eugenol",
+          "Contains polyacrylic acid",
+          "Chelation",
+          "Substitution of eugenol by EBA to increase strength"
+        ],
+        answer: 2
+      },
+      {
+        question: "18. The addition of which of the following can accelerate the setting time of zinc oxide cement:",
+        options: ["Zinc acetate", "Barium sulphate", "Zinc sulphate", "Barium chloride"],
+        answer: 0
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = '';
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(index, btn);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, btn) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) {
+        score++;
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+        optionsEl.children[correct].classList.add('correct');
+      }
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        questionEl.textContent = "Quiz Completed!";
+        optionsEl.innerHTML = '';
+        scoreEl.textContent = `Your score: ${score} / ${quizData.length}`;
+      }
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
